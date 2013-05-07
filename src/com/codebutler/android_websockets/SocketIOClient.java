@@ -42,10 +42,18 @@ public class SocketIOClient {
     String mSession;
     int mHeartbeat;
     WebSocketClient mClient;
+    String mNamespace;
 
     public SocketIOClient(URI uri, Handler handler) {
         // remove trailing "/" from URI, in case user provided e.g. http://test.com/
         mURL = uri.toString().replaceAll("/$", "") + "/socket.io/1/";
+        mHandler = handler;
+    }
+    
+    public SocketIOClient(URI uri, String namespace, Handler handler) {
+        // remove trailing "/" from URI, in case user provided e.g. http://test.com/
+        mURL = uri.toString().replaceAll("/$", "") + "/socket.io/1/";
+        mNamespace= namespace;
         mHandler = handler;
     }
 
@@ -87,7 +95,7 @@ public class SocketIOClient {
         mSendHandler.post(new Runnable() {
             @Override
             public void run() {
-                mClient.send(String.format("5:::%s", event.toString()));
+                mClient.send(String.format("5::%s:%s", mNamespace, event.toString()));
             }
         });
     }
@@ -97,7 +105,7 @@ public class SocketIOClient {
             
             @Override
             public void run() {
-                mClient.send(String.format("3:::%s", message));
+                mClient.send(String.format("3::%s:%s", mNamespace, message));
             }
         });
     }
@@ -108,7 +116,7 @@ public class SocketIOClient {
             
             @Override
             public void run() {
-                mClient.send(String.format("4:::%s", jsonMessage.toString()));
+                mClient.send(String.format("4::%s:%s", mNamespace, jsonMessage.toString()));
             }
         });
     }
@@ -233,6 +241,13 @@ public class SocketIOClient {
 
             @Override
             public void onConnect() {
+            	 mSendHandler.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         mClient.send(String.format("1::%s:", mNamespace));
+                     }
+                 });
+            	 
                 mSendHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -250,10 +265,13 @@ public class SocketIOClient {
     }
 
     private void cleanup() {
-        mClient.disconnect();
+    	if(mClient != null)
+    		mClient.disconnect();
+    	
         mClient = null;
        
-        mSendLooper.quit();
+        if(mSendLooper != null)
+        	mSendLooper.quit();
         mSendLooper = null;
         mSendHandler = null;
     }
