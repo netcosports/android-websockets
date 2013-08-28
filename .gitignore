@@ -4,3 +4,5 @@ gen
 .project
 local.properties
 /.settings/
+/.idea/
+/android-websockets.iml
