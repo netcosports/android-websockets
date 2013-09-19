@@ -220,9 +220,12 @@ public class WebSocketClient {
             public void run() {
                 try {
                     synchronized (mSendLock) {
-                        OutputStream outputStream = mSocket.getOutputStream();
-                        outputStream.write(frame);
-                        outputStream.flush();
+                        if(mSocket != null)
+                        {
+                            OutputStream outputStream = mSocket.getOutputStream();
+                            outputStream.write(frame);
+                            outputStream.flush();
+                        }
                     }
                 } catch (IOException e) {
                     mListener.onError(e);
