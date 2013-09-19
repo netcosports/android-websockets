@@ -138,7 +138,12 @@ public class SocketIOClient {
                     switch (code) {
                     case 1:
                         // connect
-                        mHandler.onConnect();
+                        if(parts.length >= 2)
+                        {
+                            final String nsString = parts[2];
+                            if(nsString.equals(mNamespace))
+                                mHandler.onConnect();
+                        }
                         break;
                     case 2:
                         // heartbeat

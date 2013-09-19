@@ -6,3 +6,4 @@ local.properties
 /.settings/
 /.idea/
 /android-websockets.iml
+/build/
