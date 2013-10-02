@@ -226,6 +226,7 @@ public class SocketIOClient {
                     }
                 }
                 catch (Exception ex) {
+                    ex.printStackTrace();
                     cleanup();
                     onError(ex);
                 }
