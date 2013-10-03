@@ -151,7 +151,8 @@ public class WebSocketClient {
                 @Override
                 public void run() {
                     try {
-                        mSocket.close();
+                        if(mSocket != null)
+                            mSocket.close();
                         mSocket = null;
                         mConnected = false;
                     } catch (IOException ex) {
